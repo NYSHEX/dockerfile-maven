@@ -15,7 +15,7 @@
   </properties>
 
   <artifactId>dockerfile-maven-extension</artifactId>
-  <version>1.3.8</version>
+  <version>1.3.9-SNAPSHOT</version>
 
   <name>Dockerfile Maven Extension</name>
   <description>Adds support for docker-info dependencies in Maven</description>
@@ -33,8 +33,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <scm>
-    <tag>v1.3.8</tag>
-  </scm>
 </project>
