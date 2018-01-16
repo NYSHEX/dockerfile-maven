@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>dockerfile-maven-plugin</artifactId>
-  <version>1.3.9-SNAPSHOT</version>
+  <version>1.3.8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Dockerfile Maven Plugin</name>
@@ -183,4 +183,8 @@
       </plugin>
     </plugins>
   </build>
+
+  <scm>
+    <tag>v1.3.9</tag>
+  </scm>
 </project>
