@@ -27,9 +27,9 @@
   </properties>
 
   <scm>
-    <url>https://github.com/NYSHEX/docker-client</url>
-    <connection>scm:git:git://github.com:NYSHEX/docker-client.git</connection>
-    <developerConnection>scm:git:git@github.com:NYSHEX/docker-client.git</developerConnection>
+    <url>https://github.com/NYSHEX/dockerfile-maven</url>
+    <connection>scm:git:git://github.com:NYSHEX/dockerfile-maven.git</connection>
+    <developerConnection>scm:git:git@github.com:NYSHEX/dockerfile-maven.git</developerConnection>
     <tag>v8.10.1</tag>
   </scm>
 
