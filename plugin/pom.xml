@@ -17,13 +17,24 @@
   <description>Adds support for building Dockerfiles in Maven</description>
 
   <properties>
-    <docker-client.version>8.10.4</docker-client.version>
+    <docker-client.version>8.10.2</docker-client.version>
     <checkstyle.skip>true</checkstyle.skip>
     <enforcer.skip>true</enforcer.skip>
     <gpg.skip>true</gpg.skip>
     <invoker.skip>true</invoker.skip>
   </properties>
-
+  <distributionManagement>
+    <repository>
+      <id>central</id>
+      <name>maven.nyshex.com-releases</name>
+      <url>https://maven.nyshex.com/artifactory/release</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <name>maven.nyshex.com-snapshots</name>
+      <url>https://maven.nyshex.com/artifactory/snapshot</url>
+    </snapshotRepository>
+  </distributionManagement>
   <dependencyManagement>
     <dependencies>
       <dependency>
