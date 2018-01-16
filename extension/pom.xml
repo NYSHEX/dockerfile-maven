@@ -19,4 +19,17 @@
   <name>Dockerfile Maven Extension</name>
   <description>Adds support for docker-info dependencies in Maven</description>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.3</version>
+        <extensions>true</extensions>
+        <configuration>
+            <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+        </configuration>
+      </plugin>
+    </plugin>
+  </build>
 </project>
