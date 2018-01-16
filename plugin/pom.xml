@@ -15,7 +15,11 @@
   <description>Adds support for building Dockerfiles in Maven</description>
 
   <properties>
-    <docker-client.version>8.8.1</docker-client.version>
+    <docker-client.version>8.10.4</docker-client.version>
+    <checkstyle.skip>true</checkstyle.skip>
+    <enforcer.skip>true</enforcer.skip>
+    <gpg.skip>true</gpg.skip>
+    <invoker.skip>true</invoker.skip>
   </properties>
 
   <dependencyManagement>
@@ -30,7 +34,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.spotify</groupId>
+      <groupId>com.nyshex</groupId>
       <artifactId>docker-client</artifactId>
       <classifier>shaded</classifier>
       <version>${docker-client.version}</version>
@@ -137,7 +141,7 @@
         <version>1.9</version>
         <dependencies>
           <dependency>
-            <groupId>com.spotify</groupId>
+            <groupId>com.nyshex</groupId>
             <artifactId>docker-client</artifactId>
             <version>${docker-client.version}</version>
           </dependency>
@@ -166,6 +170,15 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.3</version>
+        <extensions>true</extensions>
+        <configuration>
+            <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+        </configuration>
       </plugin>
     </plugins>
   </build>
