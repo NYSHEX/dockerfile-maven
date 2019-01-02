@@ -5,7 +5,7 @@
     <parent>
         <artifactId>dockerfile-maven</artifactId>
         <groupId>com.nyshex</groupId>
-        <version>1.4.10</version>
+        <version>1.4.11-SNAPSHOT</version>
     </parent>
 
     <artifactId>dockerfile-maven-extension</artifactId>
@@ -18,7 +18,7 @@
 
     <name>Dockerfile Maven Extension</name>
     <description>Adds support for docker-info dependencies in Maven</description>
-    <version>1.4.10</version>
+    <version>1.4.11-SNAPSHOT</version>
 
     <build>
         <plugins>
