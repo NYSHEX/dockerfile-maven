@@ -23,6 +23,8 @@ package com.spotify.plugin.dockerfile;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.DockerException;
 
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -47,7 +49,7 @@ public class PushMojo extends AbstractDockerMojo {
    * The tag to apply to the built image.
    */
   @Parameter(property = "dockerfile.tag")
-  private String tag;
+  private List<String> tags;
 
   /**
    * Disables the push goal; it becomes a no-op.
@@ -69,25 +71,25 @@ public class PushMojo extends AbstractDockerMojo {
       repository = readMetadata(Metadata.REPOSITORY);
     }
 
-    // Do this hoop jumping so that the override order is correct
-    if (tag == null) {
-      tag = readMetadata(Metadata.TAG);
-    }
-    if (tag == null) {
-      tag = "latest";
-    }
+    for (String tag : tags) {
+        // Do this hoop jumping so that the override order is correct
+        if (tag == null) {
+            tag = readMetadata(Metadata.TAG);
+        }
+        if (tag == null) {
+            tag = "latest";
+        }
 
-    if (repository == null) {
-      throw new MojoExecutionException(
-          "Can't push image; image repository not known "
-          + "(specify dockerfile.repository parameter, or run the tag goal before)");
-    }
+        if (repository == null) {
+            throw new MojoExecutionException("Can't push image; image repository not known "
+                    + "(specify dockerfile.repository parameter, or run the tag goal before)");
+        }
 
-    try {
-      dockerClient
-          .push(formatImageName(repository, tag), LoggingProgressHandler.forLog(log, verbose));
-    } catch (DockerException | InterruptedException e) {
-      throw new MojoExecutionException("Could not push image", e);
+        try {
+            dockerClient.push(formatImageName(repository, tag), LoggingProgressHandler.forLog(log, verbose));
+        } catch (DockerException | InterruptedException e) {
+            throw new MojoExecutionException("Could not push image", e);
+        }
     }
   }
 }

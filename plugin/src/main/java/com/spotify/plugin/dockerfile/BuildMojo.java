@@ -65,10 +65,10 @@ public class BuildMojo extends AbstractDockerMojo {
   private String repository;
 
   /**
-   * The tag to apply when building the Dockerfile, which is appended to the repository.
+   * The tags to apply when building the Dockerfile, which is appended to the repository.
    */
-  @Parameter(property = "dockerfile.tag", defaultValue = "latest")
-  private String tag;
+  @Parameter(property = "dockerfile.tags")
+  private List<String> tags;
 
   /**
    * Disables the build goal; it becomes a no-op.
@@ -110,28 +110,29 @@ public class BuildMojo extends AbstractDockerMojo {
       return;
     }
 
-    final String imageId = buildImage(
-        dockerClient, log, verbose, contextDirectory, repository, tag, pullNewerImage, noCache,
-        buildArgs, cacheFrom, squash);
+    for (String tag : tags) {
+        final String imageId = buildImage(dockerClient, log, verbose, contextDirectory, repository, tag,
+                pullNewerImage, noCache, buildArgs, cacheFrom, squash);
 
-    if (imageId == null) {
-      log.warn("Docker build was successful, but no image was built");
-    } else {
-      log.info(MessageFormat.format("Detected build of image with id {0}", imageId));
-      writeMetadata(Metadata.IMAGE_ID, imageId);
-    }
+        if (imageId == null) {
+            log.warn("Docker build was successful, but no image was built");
+        } else {
+            log.info(MessageFormat.format("Detected build of image with id {0}", imageId));
+            writeMetadata(Metadata.IMAGE_ID, imageId);
+        }
 
-    // Do this after the build so that other goals don't use the tag if it doesn't exist
-    if (repository != null) {
-      writeImageInfo(repository, tag);
-    }
+        // Do this after the build so that other goals don't use the tag if it doesn't exist
+        if (repository != null) {
+            writeImageInfo(repository, tag);
+        }
 
-    writeMetadata(log);
+        writeMetadata(log);
 
-    if (repository == null) {
-      log.info(MessageFormat.format("Successfully built {0}", imageId));
-    } else {
-      log.info(MessageFormat.format("Successfully built {0}", formatImageName(repository, tag)));
+        if (repository == null) {
+            log.info(MessageFormat.format("Successfully built {0}", imageId));
+        } else {
+            log.info(MessageFormat.format("Successfully built {0}", formatImageName(repository, tag)));
+        }
     }
   }
 

@@ -24,6 +24,7 @@ import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.DockerException;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -48,8 +49,8 @@ public class TagMojo extends AbstractDockerMojo {
   /**
    * The tag to apply to the built image.
    */
-  @Parameter(property = "dockerfile.tag", defaultValue = "latest", required = true)
-  private String tag;
+  @Parameter(property = "dockerfile.tag", required = true)
+  private List<String> tags;
 
   /**
    * Whether to force re-assignment of an already assigned tag.
@@ -74,20 +75,23 @@ public class TagMojo extends AbstractDockerMojo {
     }
 
     final String imageId = readMetadata(Metadata.IMAGE_ID);
-    final String imageName = formatImageName(repository, tag);
-
-    final String message =
-        MessageFormat.format("Tagging image {0} as {1}", imageId, imageName);
-    log.info(message);
-
-    try {
-      dockerClient.tag(imageId, imageName, force);
-    } catch (DockerException | InterruptedException e) {
-      throw new MojoExecutionException("Could not tag Docker image", e);
+    
+    for (String tag : tags) {
+        final String imageName = formatImageName(repository, tag);
+    
+        final String message =
+            MessageFormat.format("Tagging image {0} as {1}", imageId, imageName);
+        log.info(message);
+    
+        try {
+          dockerClient.tag(imageId, imageName, force);
+        } catch (DockerException | InterruptedException e) {
+          throw new MojoExecutionException("Could not tag Docker image", e);
+        }
+    
+        writeImageInfo(repository, tag);
+    
+        writeMetadata(log);
     }
-
-    writeImageInfo(repository, tag);
-
-    writeMetadata(log);
   }
 }
