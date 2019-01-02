@@ -48,7 +48,7 @@ public class PushMojo extends AbstractDockerMojo {
   /**
    * The tag to apply to the built image.
    */
-  @Parameter(property = "dockerfile.tag")
+  @Parameter(property = "dockerfile.tags")
   private List<String> tags;
 
   /**

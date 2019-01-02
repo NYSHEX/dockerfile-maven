@@ -49,7 +49,7 @@ public class TagMojo extends AbstractDockerMojo {
   /**
    * The tag to apply to the built image.
    */
-  @Parameter(property = "dockerfile.tag", required = true)
+  @Parameter(property = "dockerfile.tags", required = true)
   private List<String> tags;
 
   /**
