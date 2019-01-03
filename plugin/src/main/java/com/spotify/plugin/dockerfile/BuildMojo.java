@@ -65,7 +65,7 @@ public class BuildMojo extends AbstractDockerMojo {
   private String repository;
 
   /**
-   * The tags to apply when building the Dockerfile, which is appended to the repository.
+   * The tag to apply when building the Dockerfile, which is appended to the repository.
    */
   @Parameter(property = "dockerfile.tag", defaultValue = "latest")
   private String tag;
@@ -112,14 +112,14 @@ public class BuildMojo extends AbstractDockerMojo {
       return;
     }
     
-    buildImage(dockerClient, log, tag);
+    buildImage(dockerClient, log, tag, true);
     
     if (tagLatest && tag != "latest") {
-        buildImage(dockerClient, log, "latest");
+        buildImage(dockerClient, log, "latest", false);
     }
   }
 
-  private void buildImage(DockerClient dockerClient, Log log, String tagToBuild) throws MojoExecutionException, MojoFailureException {
+  private void buildImage(DockerClient dockerClient, Log log, String tagToBuild, boolean buildDockerInfoJar) throws MojoExecutionException, MojoFailureException {
       final String imageId = buildImage(dockerClient, log, verbose, contextDirectory, repository, tagToBuild,
               pullNewerImage, noCache, buildArgs, cacheFrom, squash);
   
@@ -134,8 +134,8 @@ public class BuildMojo extends AbstractDockerMojo {
       if (repository != null) {
           writeImageInfo(repository, tagToBuild);
       }
-  
-      writeMetadata(log);
+      
+      writeMetadata(log, buildDockerInfoJar);
   
       if (repository == null) {
           log.info(MessageFormat.format("Successfully built {0}", imageId));

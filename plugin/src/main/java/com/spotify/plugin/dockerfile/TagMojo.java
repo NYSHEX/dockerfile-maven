@@ -77,14 +77,14 @@ public class TagMojo extends AbstractDockerMojo {
       return;
     }
 
-    doTagging(dockerClient, log, tag);
+    doTagging(dockerClient, log, tag, true);
     
     if (tagLatest && tag != "latest") {
-        doTagging(dockerClient, log, "latest");
+        doTagging(dockerClient, log, "latest", false);
     }
   }
   
-  private void doTagging(DockerClient dockerClient, Log log, String tagToTag) throws MojoExecutionException {
+  private void doTagging(DockerClient dockerClient, Log log, String tagToTag, boolean attachDockerInfoJar) throws MojoExecutionException {
       final String imageId = readMetadata(Metadata.IMAGE_ID);
       
       final String imageName = formatImageName(repository, tagToTag);
@@ -101,6 +101,6 @@ public class TagMojo extends AbstractDockerMojo {
 
       writeImageInfo(repository, tagToTag);
 
-      writeMetadata(log);
+      writeMetadata(log, attachDockerInfoJar);
   }
 }

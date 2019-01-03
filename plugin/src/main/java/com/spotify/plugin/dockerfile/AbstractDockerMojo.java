@@ -284,10 +284,12 @@ public abstract class AbstractDockerMojo extends AbstractMojo {
     throw exception;
   }
 
-  protected void writeMetadata(Log log) throws MojoExecutionException {
+  protected void writeMetadata(Log log, boolean attachDockerInfoJar) throws MojoExecutionException {
     writeTestMetadata();
-    final File jarFile = buildDockerInfoJar(log);
-    attachJar(jarFile);
+    if (attachDockerInfoJar) {
+        final File jarFile = buildDockerInfoJar(log);
+        attachJar(jarFile);
+    }
   }
 
   protected void writeMetadata(@Nonnull Metadata metadata, @Nonnull String value)
