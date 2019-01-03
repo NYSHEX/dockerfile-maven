@@ -48,8 +48,8 @@ public class PushMojo extends AbstractDockerMojo {
   /**
    * The tag to apply to the built image.
    */
-  @Parameter(property = "dockerfile.tags")
-  private List<String> tags;
+  @Parameter(property = "dockerfile.tag", defaultValue = "latest")
+  private String tag;
 
   /**
    * Disables the push goal; it becomes a no-op.
@@ -57,11 +57,13 @@ public class PushMojo extends AbstractDockerMojo {
   @Parameter(property = "dockerfile.push.skip", defaultValue = "false")
   private boolean skipPush;
 
+  @Parameter(property = "dockerfile.build.tagLatest", defaultValue = "false")
+  private boolean tagLatest;
+
   @Override
   protected void execute(DockerClient dockerClient)
       throws MojoExecutionException, MojoFailureException {
     final Log log = getLog();
-
     if (skipPush) {
       log.info("Skipping execution because 'dockerfile.push.skip' is set");
       return;
@@ -71,25 +73,31 @@ public class PushMojo extends AbstractDockerMojo {
       repository = readMetadata(Metadata.REPOSITORY);
     }
 
-    for (String tag : tags) {
-        // Do this hoop jumping so that the override order is correct
-        if (tag == null) {
-            tag = readMetadata(Metadata.TAG);
-        }
-        if (tag == null) {
-            tag = "latest";
-        }
-
-        if (repository == null) {
-            throw new MojoExecutionException("Can't push image; image repository not known "
-                    + "(specify dockerfile.repository parameter, or run the tag goal before)");
-        }
-
-        try {
-            dockerClient.push(formatImageName(repository, tag), LoggingProgressHandler.forLog(log, verbose));
-        } catch (DockerException | InterruptedException e) {
-            throw new MojoExecutionException("Could not push image", e);
-        }
+    // Do this hoop jumping so that the override order is correct
+    if (tag == null) {
+        tag = readMetadata(Metadata.TAG);
     }
+    if (tag == null) {
+        tag = "latest";
+    }
+
+    if (repository == null) {
+        throw new MojoExecutionException("Can't push image; image repository not known "
+                + "(specify dockerfile.repository parameter, or run the tag goal before)");
+    }
+
+    push(dockerClient, log, tag);
+    
+    if (tagLatest && tag != "latest") {
+        push(dockerClient, log, "latest");
+    }
+  }
+  
+  private void push(DockerClient dockerClient, Log log, String tagToPush) throws MojoExecutionException {
+      try {
+          dockerClient.push(formatImageName(repository, tagToPush), LoggingProgressHandler.forLog(log, verbose));
+      } catch (DockerException | InterruptedException e) {
+          throw new MojoExecutionException("Could not push image", e);
+      }
   }
 }

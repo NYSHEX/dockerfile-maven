@@ -67,8 +67,8 @@ public class BuildMojo extends AbstractDockerMojo {
   /**
    * The tags to apply when building the Dockerfile, which is appended to the repository.
    */
-  @Parameter(property = "dockerfile.tags")
-  private List<String> tags;
+  @Parameter(property = "dockerfile.tag", defaultValue = "latest")
+  private String tag;
 
   /**
    * Disables the build goal; it becomes a no-op.
@@ -99,41 +99,49 @@ public class BuildMojo extends AbstractDockerMojo {
 
   @Parameter(property = "dockerfile.build.squash", defaultValue = "false")
   private boolean squash;
+  
+  @Parameter(property = "dockerfile.build.tagLatest", defaultValue = "false")
+  private boolean tagLatest;
 
   @Override
   public void execute(DockerClient dockerClient)
       throws MojoExecutionException, MojoFailureException {
     final Log log = getLog();
-
     if (skipBuild) {
       log.info("Skipping execution because 'dockerfile.build.skip' is set");
       return;
     }
-
-    for (String tag : tags) {
-        final String imageId = buildImage(dockerClient, log, verbose, contextDirectory, repository, tag,
-                pullNewerImage, noCache, buildArgs, cacheFrom, squash);
-
-        if (imageId == null) {
-            log.warn("Docker build was successful, but no image was built");
-        } else {
-            log.info(MessageFormat.format("Detected build of image with id {0}", imageId));
-            writeMetadata(Metadata.IMAGE_ID, imageId);
-        }
-
-        // Do this after the build so that other goals don't use the tag if it doesn't exist
-        if (repository != null) {
-            writeImageInfo(repository, tag);
-        }
-
-        writeMetadata(log);
-
-        if (repository == null) {
-            log.info(MessageFormat.format("Successfully built {0}", imageId));
-        } else {
-            log.info(MessageFormat.format("Successfully built {0}", formatImageName(repository, tag)));
-        }
+    
+    buildImage(dockerClient, log, tag);
+    
+    if (tagLatest && tag != "latest") {
+        buildImage(dockerClient, log, "latest");
     }
+  }
+
+  private void buildImage(DockerClient dockerClient, Log log, String tagToBuild) throws MojoExecutionException, MojoFailureException {
+      final String imageId = buildImage(dockerClient, log, verbose, contextDirectory, repository, tagToBuild,
+              pullNewerImage, noCache, buildArgs, cacheFrom, squash);
+  
+      if (imageId == null) {
+          log.warn("Docker build was successful, but no image was built");
+      } else {
+          log.info(MessageFormat.format("Detected build of image with id {0}", imageId));
+          writeMetadata(Metadata.IMAGE_ID, imageId);
+      }
+  
+      // Do this after the build so that other goals don't use the tag if it doesn't exist
+      if (repository != null) {
+          writeImageInfo(repository, tagToBuild);
+      }
+  
+      writeMetadata(log);
+  
+      if (repository == null) {
+          log.info(MessageFormat.format("Successfully built {0}", imageId));
+      } else {
+          log.info(MessageFormat.format("Successfully built {0}", formatImageName(repository, tagToBuild)));
+      }
   }
 
   @Nullable

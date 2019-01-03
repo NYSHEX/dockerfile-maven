@@ -49,8 +49,8 @@ public class TagMojo extends AbstractDockerMojo {
   /**
    * The tag to apply to the built image.
    */
-  @Parameter(property = "dockerfile.tags", required = true)
-  private List<String> tags;
+  @Parameter(property = "dockerfile.tag", required = true)
+  private String tag;
 
   /**
    * Whether to force re-assignment of an already assigned tag.
@@ -63,35 +63,44 @@ public class TagMojo extends AbstractDockerMojo {
    */
   @Parameter(property = "dockerfile.tag.skip", defaultValue = "false")
   private boolean skipTag;
+  
+
+  @Parameter(property = "dockerfile.build.tagLatest", defaultValue = "false")
+  private boolean tagLatest;
 
   @Override
   protected void execute(DockerClient dockerClient)
       throws MojoExecutionException, MojoFailureException {
     final Log log = getLog();
-
     if (skipTag) {
       log.info("Skipping execution because 'dockerfile.tag.skip' is set");
       return;
     }
 
-    final String imageId = readMetadata(Metadata.IMAGE_ID);
+    doTagging(dockerClient, log, tag);
     
-    for (String tag : tags) {
-        final String imageName = formatImageName(repository, tag);
-    
-        final String message =
-            MessageFormat.format("Tagging image {0} as {1}", imageId, imageName);
-        log.info(message);
-    
-        try {
-          dockerClient.tag(imageId, imageName, force);
-        } catch (DockerException | InterruptedException e) {
-          throw new MojoExecutionException("Could not tag Docker image", e);
-        }
-    
-        writeImageInfo(repository, tag);
-    
-        writeMetadata(log);
+    if (tagLatest && tag != "latest") {
+        doTagging(dockerClient, log, "latest");
     }
+  }
+  
+  private void doTagging(DockerClient dockerClient, Log log, String tagToTag) throws MojoExecutionException {
+      final String imageId = readMetadata(Metadata.IMAGE_ID);
+      
+      final String imageName = formatImageName(repository, tagToTag);
+
+      final String message =
+          MessageFormat.format("Tagging image {0} as {1}", imageId, imageName);
+      log.info(message);
+
+      try {
+        dockerClient.tag(imageId, imageName, force);
+      } catch (DockerException | InterruptedException e) {
+        throw new MojoExecutionException("Could not tag Docker image", e);
+      }
+
+      writeImageInfo(repository, tagToTag);
+
+      writeMetadata(log);
   }
 }
