@@ -10,7 +10,7 @@
 
   <groupId>com.nyshex</groupId>
   <artifactId>dockerfile-maven</artifactId>
-  <version>1.4.16-SNAPSHOT</version>
+  <version>1.4.16</version>
   <packaging>pom</packaging>
 
   <name>Dockerfile Maven Support</name>
@@ -33,7 +33,7 @@
     <url>https://github.com/NYSHEX/dockerfile-maven</url>
     <connection>scm:git:git://github.com:NYSHEX/dockerfile-maven.git</connection>
     <developerConnection>scm:git:git@github.com:NYSHEX/dockerfile-maven.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v1.4.16</tag>
   </scm>
 
     <distributionManagement>
