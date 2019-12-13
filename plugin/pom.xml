@@ -24,14 +24,12 @@
 
     <distributionManagement>
         <repository>
-            <id>central</id>
-            <name>maven.nyshex.com-releases</name>
-            <url>https://maven.nyshex.com/artifactory/release</url>
+            <id>archive.nyshex.com-release</id>
+            <url>https://archive.nyshex.com/artifactory/release</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <name>maven.nyshex.com-snapshots</name>
-            <url>https://maven.nyshex.com/artifactory/snapshot</url>
+            <id>archive.nyshex.com-snapshot</id>
+            <url>https://archive.nyshex.com/artifactory/snapshot</url>
         </snapshotRepository>
     </distributionManagement>
 
